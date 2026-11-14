@@ -21,91 +21,1199 @@
     <meta name="twitter:description" content="نبع التناسي كودر">
 
 <title>نبع التناسي كودر</title>
+    <link rel="stylesheet" href="./styles.css">
 
-<style>
-*{box-sizing:border-box}
+    <style>
+        body {
+            background: #f5f7fb;
+        }
 
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#0b1020;
-    color:#f1f5f9
+        .hero {
+            background: linear-gradient(135deg, #1d4ed8, #6366f1);
+            border-radius: 22px;
+            padding: 35px;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: #dbeafe;
+            font-size: 14px;
+            max-width: 650px;
+        }
+
+        .hero-icon {
+            position: absolute;
+            left: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 90px;
+            opacity: .15;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .prompt-area {
+            min-height: 145px;
+            font-size: 14px;
+        }
+
+        .field-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .field-tag {
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .code-toolbar {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 12px 17px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: ltr;
+            font-size: 12px;
+        }
+
+        .generated-code {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 22px;
+            border-radius: 0 0 12px 12px;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            overflow-x: auto;
+            min-height: 260px;
+            max-height: 650px;
+            overflow-y: auto;
+            font-family: 'Fira Code', Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.9;
+            tab-size: 4;
+        }
+
+        .side-card {
+            position: sticky;
+            top: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 11px 0;
+            border-bottom: 1px solid #e5eaf2;
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: 0;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .suggestion {
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 20px;
+            padding: 7px 12px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background: #dbeafe;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        .loading-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #dbeafe;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .result-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .result-empty .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .result-empty h3 {
+            color: #172033;
+            margin-bottom: 7px;
+        }
+
+        .template-card {
+            border: 1px solid #e5eaf2;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .template-card:hover {
+            border-color: #2563eb;
+            background: #f8fbff;
+        }
+
+        .template-card.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .template-card strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .template-card small {
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media(max-width: 900px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .side-card {
+                position: static;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .hero {
+                padding: 25px 20px;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .hero-icon {
+                display: none;
+            }
+
+            .result-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<main class="main-content" style="margin-right:0">
+
+    <div class="page-container">
+
+        <!-- HEADER -->
+
+        <header class="page-header">
+
+            <div class="brand" style="border:0;padding:0;margin:0">
+
+                <div class="brand-icon">AI</div>
+
+                <div>
+                    <div class="brand-name">AI Builder PRO</div>
+                    <div class="brand-caption">منشئ الأكواد الذكي</div>
+                </div>
+
+            </div>
+
+            <div class="flex gap-10 flex-wrap">
+
+                <button
+                    type="button"
+                    id="refreshTemplates"
+                    class="btn btn-outline"
+                >
+                    ↻ تحديث القوالب
+                </button>
+
+                <a href="./admin.html" class="btn btn-secondary">
+                    لوحة الإدارة
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <h1>أنشئ أكوادك البرمجية بسهولة</h1>
+
+            <p>
+                اكتب وصف المشروع أو الوظيفة التي تريد تنفيذها،
+                وسيبحث النظام في مكتبة القوالب ويولد الكود المناسب
+                باستخدام الحقول التي تحددها.
+            </p>
+
+            <div class="hero-icon">⌘</div>
+
+        </section>
+
+
+        <!-- WORKSPACE -->
+
+        <section class="workspace">
+
+            <!-- MAIN COLUMN -->
+
+            <div>
+
+                <!-- REQUEST -->
+
+                <section class="card mb-20">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2 class="card-title">وصف المطلوب</h2>
+
+                            <p class="card-description">
+                                اشرح ما تريد إنشاءه بلغة طبيعية.
+                            </p>
+                        </div>
+
+                        <span class="badge badge-primary">
+                            خطوة 1
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            ماذا تريد أن تنشئ؟
+                        </label>
+
+                        <textarea
+                            id="prompt"
+                            class="form-control prompt-area"
+                            placeholder="مثال: أريد كود Java لإضافة بيانات الطلاب إلى قاعدة SQLite باستخدام الحقول name و age و email..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            حقول إضافية (اختياري)
+                        </label>
+
+                        <input
+                            type="text"
+                            id="extraFields"
+                            class="form-control"
+                            placeholder="name, age, email, phone"
+                        >
+
+                        <div class="form-help">
+                            اكتب أسماء الحقول وافصل بينها بفاصلة.
+                            ستُدمج هذه الحقول مع الحقول الافتراضية للقالب.
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            اقتراحات سريعة
+                        </label>
+
+                        <div class="suggestions" id="suggestions">
+
+                            <button class="suggestion" type="button"
+                                data-prompt="Java SQLite Insert Students">
+                                Java SQLite
+                            </button>
+
+                            <button class="suggestion" type="button"
+                                data-prompt="PHP MySQL Insert Data">
+                                PHP MySQL
+                            </button>
+
+                            <button class="suggestion" type="button"
+                                data-prompt="HTML Form">
+                                HTML Form
+                            </button>
+
+                            <button class="suggestion" type="button"
+                                data-prompt="Python Database Insert">
+                                Python Database
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex gap-10 flex-wrap">
+
+                        <button
+                            type="button"
+                            id="generateButton"
+                            class="btn btn-primary"
+                        >
+                            ✦ إنشاء الكود
+                        </button>
+
+                        <button
+                            type="button"
+                            id="clearButton"
+                            class="btn btn-outline"
+                        >
+                            مسح البيانات
+                        </button>
+
+                    </div>
+
+                    <div id="requestStatus" class="status"></div>
+
+                </section>
+
+
+                <!-- GENERATED RESULT -->
+
+                <section class="card">
+
+                    <div class="result-header">
+
+                        <div>
+                            <h2 class="card-title">النتيجة البرمجية</h2>
+
+                            <p class="card-description">
+                                الكود الناتج من القالب المختار.
+                            </p>
+                        </div>
+
+                        <div class="result-actions">
+
+                            <button
+                                type="button"
+                                id="copyButton"
+                                class="btn btn-success btn-sm"
+                                disabled
+                            >
+                                نسخ الكود
+                            </button>
+
+                            <button
+                                type="button"
+                                id="downloadButton"
+                                class="btn btn-secondary btn-sm"
+                                disabled
+                            >
+                                تنزيل الملف
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="emptyResult" class="result-empty">
+
+                        <div class="icon">⌨</div>
+
+                        <h3>بانتظار طلبك البرمجي</h3>
+
+                        <p>
+                            اكتب وصف المشروع واضغط على إنشاء الكود.
+                        </p>
+
+                    </div>
+
+
+                    <div id="resultContainer" class="hidden">
+
+                        <div class="code-toolbar">
+
+                            <span id="codeLanguage">TEXT</span>
+
+                            <span id="codeFileName">generated.txt</span>
+
+                        </div>
+
+                        <pre id="generatedCode"
+                             class="generated-code"></pre>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- SIDE COLUMN -->
+
+            <aside>
+
+                <section class="card side-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2 class="card-title">معلومات القالب</h2>
+                            <p class="card-description">
+                                تفاصيل القالب المستخدم
+                            </p>
+                        </div>
+
+                        <span class="badge badge-success">
+                            Firebase
+                        </span>
+
+                    </div>
+
+
+                    <div id="templateInfo">
+
+                        <div class="empty-state" style="padding:25px 5px">
+
+                            <div class="empty-icon">▤</div>
+
+                            <p>
+                                لم يتم اختيار قالب بعد.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="editor-section">
+
+                        <h3>الحقول المستخدمة</h3>
+
+                        <div id="usedFields" class="field-tags">
+
+                            <span class="text-muted"
+                                  style="font-size:12px">
+                                لا توجد حقول حالياً
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="editor-section">
+
+                        <div class="flex-between">
+
+                            <h3>القوالب المتاحة</h3>
+
+                            <span id="templatesCount"
+                                  class="badge badge-gray">
+                                0
+                            </span>
+
+                        </div>
+
+                        <div id="availableTemplates">
+
+                            <p class="text-muted"
+                               style="font-size:12px;margin-top:10px">
+                                جاري تحميل القوالب...
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </section>
+
+
+        <footer class="text-center text-muted mt-20"
+                style="font-size:12px;padding:20px">
+            AI Builder PRO · Powered by Firebase Cloud Firestore
+        </footer>
+
+    </div>
+
+</main>
+
+
+<!-- JAVASCRIPT -->
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+import TemplateEngine from "./template-engine.js";
+
+
+// ===================================
+// ELEMENTS
+// ===================================
+
+const $ = id => document.getElementById(id);
+
+const promptInput = $("prompt");
+const extraFieldsInput = $("extraFields");
+
+const generateButton = $("generateButton");
+const requestStatus = $("requestStatus");
+
+let templates = [];
+let selectedTemplate = null;
+let generatedResult = null;
+
+
+// ===================================
+// STATUS
+// ===================================
+
+function setStatus(message, type = "") {
+
+    requestStatus.textContent = message;
+
+    requestStatus.style.color =
+        type === "error" ? "#dc2626" :
+        type === "success" ? "#16a34a" :
+        "#64748b";
+
 }
 
-header{
-    padding:22px;
-    background:#111827;
-    border-bottom:1px solid #293244
+
+// ===================================
+// LOAD FIRESTORE TEMPLATES
+// ===================================
+
+async function loadTemplates() {
+
+    setStatus("جارٍ الاتصال بقاعدة البيانات...");
+
+    $("availableTemplates").textContent = "جاري تحميل القوالب...";
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "code_templates")
+        );
+
+        templates = snapshot.docs.map(item => ({
+            id: item.id,
+            ...item.data()
+        }));
+
+        renderAvailableTemplates();
+
+        setStatus(
+            `تم تحميل ${templates.length} قالب بنجاح.`,
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error("Firestore error:", error);
+
+        $("availableTemplates").textContent =
+            "تعذر تحميل القوالب. تحقق من اتصال الإنترنت وقواعد Firestore.";
+
+        setStatus(
+            "حدث خطأ أثناء الاتصال بقاعدة البيانات.",
+            "error"
+        );
+
+    }
+
 }
 
-header h1{
-    margin:0 0 8px;
-    font-size:23px
+
+// ===================================
+// RENDER AVAILABLE TEMPLATES
+// ===================================
+
+function renderAvailableTemplates() {
+
+    const container = $("availableTemplates");
+
+    container.replaceChildren();
+
+    $("templatesCount").textContent = templates.length;
+
+    if (!templates.length) {
+
+        container.textContent = "لا توجد قوالب متاحة.";
+
+        return;
+    }
+
+    templates.slice(0, 10).forEach(item => {
+
+        const card = document.createElement("div");
+
+        card.className = "template-card";
+
+        if (selectedTemplate?.id === item.id) {
+            card.classList.add("selected");
+        }
+
+        const title = document.createElement("strong");
+        title.textContent = item.title || "قالب بدون عنوان";
+
+        const description = document.createElement("small");
+        description.textContent =
+            `${item.language || "Other"} · ${(item.keywords || []).join("، ")}`;
+
+        card.append(title, description);
+
+        card.addEventListener("click", () => {
+
+            selectedTemplate = item;
+
+            renderAvailableTemplates();
+
+            setStatus(
+                `تم اختيار القالب: ${item.title}`,
+                "success"
+            );
+
+        });
+
+        container.appendChild(card);
+
+    });
+
 }
 
-header p{
-    color:#9ca3af;
-    margin:0
+
+// ===================================
+// GET EXTRA FIELDS
+// ===================================
+
+function getExtraFields() {
+
+    return extraFieldsInput.value
+        .split(/[,،;|\n]+/)
+        .map(item => item.trim())
+        .filter(Boolean);
+
 }
 
-.container{
-    max-width:1100px;
-    margin:auto;
-    padding:20px 14px
+
+// ===================================
+// GENERATE CODE
+// ===================================
+
+async function generateCode() {
+
+    const prompt = promptInput.value.trim();
+
+    if (!prompt && !selectedTemplate) {
+
+        setStatus(
+            "يرجى كتابة وصف المطلوب أو اختيار قالب.",
+            "error"
+        );
+
+        promptInput.focus();
+
+        return;
+    }
+
+    if (!templates.length) {
+
+        setStatus(
+            "لا توجد قوالب محملة. حاول تحديث المكتبة.",
+            "error"
+        );
+
+        return;
+    }
+
+    generateButton.disabled = true;
+
+    generateButton.innerHTML =
+        '<span class="loading-indicator"></span> جارٍ إنشاء الكود...';
+
+    try {
+
+        let template = selectedTemplate;
+
+        // Automatically find the best matching template
+        if (!template) {
+
+            template = TemplateEngine.findBestTemplate(
+                prompt,
+                templates
+            );
+
+        }
+
+        if (!template) {
+
+            throw new Error(
+                "لم يتم العثور على قالب مناسب. أضف قالباً من لوحة الإدارة."
+            );
+
+        }
+
+        const extraFields = getExtraFields();
+
+        const result = TemplateEngine.generate(
+            template,
+            prompt,
+            extraFields
+        );
+
+        selectedTemplate = template;
+
+        generatedResult = result;
+
+        showResult(result, template);
+
+        renderAvailableTemplates();
+
+        setStatus(
+            "تم إنشاء الكود بنجاح باستخدام القالب: " + template.title,
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        setStatus(error.message || "حدث خطأ أثناء إنشاء الكود.", "error");
+
+    } finally {
+
+        generateButton.disabled = false;
+        generateButton.textContent = "✦ إنشاء الكود";
+
+    }
+
 }
 
-.panel{
-    background:#111827;
-    border:1px solid #293244;
-    border-radius:14px;
-    padding:18px;
-    margin-bottom:18px
+
+// ===================================
+// SHOW RESULT
+// ===================================
+
+function showResult(result, template) {
+
+    $("emptyResult").classList.add("hidden");
+
+    $("resultContainer").classList.remove("hidden");
+
+    $("generatedCode").textContent = result.code;
+
+    $("codeLanguage").textContent =
+        String(result.language || "TEXT").toUpperCase();
+
+    const extension = getExtension(result.language);
+
+    $("codeFileName").textContent =
+        makeFileName(template.title) + "." + extension;
+
+    $("copyButton").disabled = false;
+
+    $("downloadButton").disabled = false;
+
+    showTemplateInfo(template);
+
+    showFields(result.fields);
+
 }
 
-textarea,input{
-    width:100%;
-    padding:13px;
-    border-radius:9px;
-    border:1px solid #374151;
-    background:#0b1020;
-    color:white;
-    font:inherit
+
+// ===================================
+// TEMPLATE INFO
+// ===================================
+
+function showTemplateInfo(template) {
+
+    const container = $("templateInfo");
+
+    container.replaceChildren();
+
+    const rows = [
+        ["اسم القالب", template.title || "بدون عنوان"],
+        ["لغة البرمجة", template.language || "غير محددة"],
+        ["الوصف", template.description || "لا يوجد وصف"],
+        ["عدد الكلمات", (template.keywords || []).length],
+        ["درجة المطابقة", template.matchScore
+            ? Math.round(template.matchScore * 100) + "%"
+            : "اختيار يدوي"]
+    ];
+
+    rows.forEach(([label, value]) => {
+
+        const row = document.createElement("div");
+        row.className = "info-row";
+
+        const labelElement = document.createElement("span");
+        labelElement.className = "info-label";
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("span");
+        valueElement.className = "info-value";
+        valueElement.textContent = String(value);
+
+        row.append(labelElement, valueElement);
+
+        container.appendChild(row);
+
+    });
+
 }
 
-textarea{
-    min-height:130px;
-    resize:none;
-    outline:none;
+
+// ===================================
+// SHOW FIELDS
+// ===================================
+
+function showFields(fields) {
+
+    const container = $("usedFields");
+
+    container.replaceChildren();
+
+    if (!fields.length) {
+
+        container.textContent = "لا توجد حقول.";
+
+        return;
+    }
+
+    fields.forEach(field => {
+
+        const tag = document.createElement("span");
+
+        tag.className = "field-tag";
+
+        tag.textContent = field;
+
+        container.appendChild(tag);
+
+    });
+
 }
 
-button{
-    padding:11px 16px;
-    border:0;
-    border-radius:8px;
-    cursor:pointer;
-    font:inherit;
-    font-weight:bold
+
+// ===================================
+// LANGUAGE EXTENSIONS
+// ===================================
+
+function getExtension(language) {
+
+    const extensions = {
+        java: "java",
+        kotlin: "kt",
+        python: "py",
+        php: "php",
+        javascript: "js",
+        html: "html",
+        css: "css",
+        sql: "sql",
+        dart: "dart",
+        "c++": "cpp",
+        "c#": "cs",
+        xml: "xml",
+        json: "json",
+        text: "txt"
+    };
+
+    const key = String(language || "text").toLowerCase();
+
+    return extensions[key] || "txt";
+
 }
 
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed
+
+// ===================================
+// SAFE FILE NAME
+// ===================================
+
+function makeFileName(value) {
+
+    const name = String(value || "generated-code")
+        .trim()
+        .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+        .replace(/\s+/g, "_")
+        .slice(0, 70);
+
+    return name || "generated-code";
+
 }
 
-.primary{background:#2563eb;color:white}
-.secondary{background:#374151;color:white}
 
-.actions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-top:12px
-}
+// ===================================
+// COPY CODE
+// ===================================
 
-.status{
-    color:#93c5fd;
-    margin-top:12px;
-    line-height:1.8;
+$("copyButton").addEventListener("click", async () => {
+
+    if (!generatedResult) return;
+
+    try {
+
+        await navigator.clipboard.writeText(
+            generatedResult.code
+        );
+
+        $("copyButton").textContent = "تم النسخ ✓";
+
+        setTimeout(() => {
+            $("copyButton").textContent = "نسخ الكود";
+        }, 1500);
+
+    } catch (error) {
+
+        setStatus(
+            "تعذر نسخ الكود. تحقق من صلاحيات المتصفح.",
+            "error"
+        );
+
+    }
+
+});
+
+
+// ===================================
+// DOWNLOAD CODE
+// ===================================
+
+$("downloadButton").addEventListener("click", () => {
+
+    if (!generatedResult) return;
+
+    const extension = getExtension(generatedResult.language);
+
+    const filename =
+        makeFileName(generatedResult.title) + "." + extension;
+
+    const blob = new Blob(
+        [generatedResult.code],
+        { type: "text/plain;charset=utf-8" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+});
+
+
+// ===================================
+// GENERATE BUTTON
+// ===================================
+
+generateButton.addEventListener("click", generateCode);
+
+
+// ===================================
+// SUGGESTIONS
+// ===================================
+
+document.querySelectorAll(".suggestion").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        promptInput.value = button.dataset.prompt || "";
+
+        selectedTemplate = null;
+
+        promptInput.focus();
+
+    });
+
+});
+
+
+// ===================================
+// CLEAR FORM
+// ===================================
+
+$("clearButton").addEventListener("click", () => {
+
+    promptInput.value = "";
+
+    extraFieldsInput.value = "";
+
+    selectedTemplate = null;
+
+    generatedResult = null;
+
+    $("resultContainer").classList.add("hidden");
+
+    $("emptyResult").classList.remove("hidden");
+
+    $("copyButton").disabled = true;
+
+    $("downloadButton").disabled = true;
+
+    $("templateInfo").innerHTML = `
+        <div class="empty-state" style="padding:25px 5px">
+            <div class="empty-icon">▤</div>
+            <p>لم يتم اختيار قالب بعد.</p>
+        </div>
+    `;
+
+    $("usedFields").textContent = "لا توجد حقول حالياً";
+
+    renderAvailableTemplates();
+
+    setStatus("تم مسح البيانات.");
+
+});
+
+
+// ===================================
+// REFRESH
+// ===================================
+
+$("refreshTemplates").addEventListener("click", async () => {
+
+    selectedTemplate = null;
+
+    await loadTemplates();
+
+});
+
+
+// ===================================
+// KEYBOARD SHORTCUT
+// ===================================
+
+promptInput.addEventListener("keydown", event => {
+
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+
+        generateCode();
+
+    }
+
+});
+
+
+// ===================================
+// INITIALIZATION
+// ===================================
+
+await loadTemplates();
+
+</script>
+
+</body>
+</html>
+
     overflow-wrap:anywhere
 }
 
