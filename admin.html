@@ -1,844 +1,1465 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة قوالب الأكواد</title>
+    <link rel="stylesheet" href="./styles.css">
 
-<title>إدارة قوالب الأكواد | AI Builder PRO</title>
+    <style>
+        .admin-hidden { display: none !important; }
 
-<style>
-*{box-sizing:border-box}
+        .login-error {
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
 
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f3f5f9;
-    color:#172033
-}
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
 
-header{
-    background:#111827;
-    color:#fff;
-    padding:22px
-}
+        .toolbar .search-box {
+            max-width: 400px;
+        }
 
-header h1{
-    margin:0 0 8px;
-    font-size:24px
-}
+        .template-title {
+            font-weight: 800;
+            color: #172033;
+        }
 
-header p{
-    margin:0;
-    color:#cbd5e1
-}
+        .template-description {
+            color: #64748b;
+            font-size: 12px;
+            max-width: 280px;
+        }
 
-.container{
-    max-width:1200px;
-    margin:25px auto;
-    padding:0 15px
-}
+        .editor-section {
+            margin-top: 22px;
+        }
 
-.card{
-    background:#fff;
-    border-radius:14px;
-    padding:22px;
-    margin-bottom:20px;
-    box-shadow:0 4px 18px #00000008
-}
+        .editor-section h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
 
-h2{
-    margin-top:0;
-    font-size:20px
-}
+        .preview-box {
+            background: #111827;
+            color: #e5e7eb;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            padding: 18px;
+            border-radius: 12px;
+            min-height: 130px;
+            font-family: monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
 
-label{
-    display:block;
-    margin:14px 0 7px;
-    font-weight:bold
-}
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-input,select,textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #d8deea;
-    border-radius:8px;
-    font:inherit;
-    background:#fff
-}
+        .user-info {
+            background: #f8fafc;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
 
-textarea{
-    min-height:90px;
-    resize:vertical
-}
+        .status-message {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
 
-#template{
-    min-height:340px;
-    direction:ltr;
-    text-align:left;
-    font-family:Consolas,monospace;
-    font-size:14px;
-    white-space:pre;
-    tab-size:4
-}
+        .status-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
 
-button{
-    border:0;
-    border-radius:8px;
-    padding:11px 17px;
-    cursor:pointer;
-    font:inherit;
-    font-weight:bold
-}
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed
-}
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
 
-.primary{background:#2563eb;color:#fff}
-.secondary{background:#e5e7eb;color:#111827}
-.danger{background:#fee2e2;color:#991b1b}
-.success{background:#dcfce7;color:#166534}
+        .template-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
 
-.actions{
-    display:flex;
-    gap:9px;
-    flex-wrap:wrap;
-    margin-top:18px
-}
+        .template-form .full {
+            grid-column: 1 / -1;
+        }
 
-.message{
-    padding:12px;
-    margin-top:15px;
-    border-radius:8px;
-    display:none;
-    overflow-wrap:anywhere;
-    line-height:1.8
-}
+        .loading {
+            opacity: .65;
+            pointer-events: none;
+        }
 
-.message.success{
-    display:block;
-    background:#dcfce7;
-    color:#166534
-}
+        @media(max-width: 650px) {
+            .template-form {
+                grid-template-columns: 1fr;
+            }
 
-.message.danger{
-    display:block;
-    background:#fee2e2;
-    color:#991b1b
-}
-
-.template-list{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-    gap:15px
-}
-
-.template-item{
-    border:1px solid #e5e7eb;
-    border-radius:10px;
-    padding:15px;
-    min-width:0;
-    overflow-wrap:anywhere
-}
-
-.template-item h3{margin-top:0}
-
-.badge{
-    display:inline-block;
-    background:#dbeafe;
-    color:#1d4ed8;
-    border-radius:5px;
-    padding:5px 8px;
-    font-size:12px
-}
-
-.small{
-    color:#64748b;
-    font-size:13px;
-    overflow-wrap:anywhere;
-    line-height:1.8
-}
-
-.help{
-    background:#eff6ff;
-    border-right:4px solid #2563eb;
-    padding:13px;
-    line-height:2;
-    overflow-wrap:anywhere
-}
-
-code{
-    direction:ltr;
-    display:inline-block;
-    background:#e2e8f0;
-    padding:2px 5px;
-    border-radius:4px
-}
-
-hr{
-    border:0;
-    border-top:1px solid #e5e7eb;
-    margin:22px 0
-}
-
-@media(max-width:600px){
-    header h1{font-size:20px}
-    .card{padding:15px}
-}
-</style>
+            .template-form .full {
+                grid-column: auto;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
-    <h1>منشىء الأكواد</h1>
-   </header>
+<!-- =========================
+     LOGIN
+========================= -->
 
-<div class="container">
+<section id="loginSection" class="login-wrapper">
 
-    <!-- تسجيل الدخول -->
-    <div class="card" id="loginCard">
+    <div class="login-card">
 
-        <h2>تسجيل دخول </h2>
+        <div class="login-logo">AI</div>
+        <h1 class="login-title">لوحة الإدارة</h1>
+        <p class="login-subtitle">نبع التناسي</p>
 
-     
+        <div id="loginMessage" class="admin-hidden"></div>
 
         <form id="loginForm">
 
-            <label for="email">البريد الإلكتروني</label>
-            <input
-                type="email"
-                id="email"
-                autocomplete="username"
-                required
-            >
-
-            <label for="password">كلمة المرور</label>
-            <input
-                type="password"
-                id="password"
-                autocomplete="current-password"
-                required
-            >
-
-            <div class="actions">
-                <button class="primary" id="loginBtn" type="submit">
-                    تسجيل الدخول
-                </button>
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    placeholder="admin@example.com"
+                    required
+                    autocomplete="username"
+                >
             </div>
+
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    placeholder="أدخل كلمة المرور"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button
+                type="submit"
+                id="loginButton"
+                class="btn btn-primary btn-block"
+            >
+                تسجيل الدخول
+            </button>
 
         </form>
 
-        <div id="loginMessage" class="message"></div>
+        <p class="text-muted text-center mt-20" style="font-size:12px">
+            الدخول مخصص لحسابات المسؤولين المعتمدين فقط.
+        </p>
+
     </div>
 
-    <!-- لوحة الإدارة -->
-    <div id="adminArea" hidden>
+</section>
 
-        <div class="card">
 
-           <form id="templateForm">
+<!-- =========================
+     ADMIN APPLICATION
+========================= -->
 
-                <input type="hidden" id="docId">
+<div id="adminApplication" class="app-layout admin-hidden">
 
-                <label for="title">اسم القالب</label>
-                <input
-                    id="title"
-                    required
-                >
+    <!-- SIDEBAR -->
 
-                <label for="language">لغة البرمجة</label>
-                <input
-                    id="language"
-                    required
-                    list="languages"
-                    placeholder="Java"
-                >
+    <aside class="sidebar">
 
-                <datalist id="languages">
-                    <option value="PHP">
-                    <option value="Java">
-                    <option value="JavaScript">
-                    <option value="Python">
-                    <option value="HTML">
-                    <option value="CSS">
-                    <option value="SQL">
-                    <option value="C++">
-                    <option value="C#">
-                    <option value="Dart">
-                    <option value="XML">
-                    <option value="JSON">
-                </datalist>
+        <div class="brand">
 
-                <label for="keywords">كلمات البحث</label>
-                <input
-                    id="keywords"
-                    required
-                    > 
+            <div class="brand-icon">AI</div>
 
-                <label for="defaultFields">الحقول الافتراضية</label>
-                <input
-                    id="defaultFields"
-                    
-                >
+            <div>
+                <div class="brand-name">AI Builder PRO</div>
+                <div class="brand-caption">لوحة إدارة القوالب</div>
+            </div>
 
-                <label for="description">وصف القالب</label>
-                <textarea
-                    id="description"
-                
-                ></textarea>
+        </div>
 
-                <label for="template">قالب الكود البرمجي</label>
-                <textarea
-                    id="template"
-                    required
-                    spellcheck="false"
-                    
-                ></textarea>
+        <div class="sidebar-label">القائمة الرئيسية</div>
 
-                <div class="actions">
+        <nav class="sidebar-nav">
 
-                    <button class="primary" type="submit" id="saveBtn">
-                        حفظ القالب
+            <a href="#dashboard" class="nav-item active">
+                <span class="nav-icon">▦</span>
+                الرئيسية
+            </a>
+
+            <a href="#templates" class="nav-item">
+                <span class="nav-icon">⌘</span>
+                القوالب
+            </a>
+
+            <a href="#editor" class="nav-item">
+                <span class="nav-icon">＋</span>
+                إضافة قالب
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="user-info">
+                <strong>المسؤول الحالي</strong>
+                <div id="adminEmail">...</div>
+            </div>
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="btn btn-danger btn-block mt-20"
+            >
+                تسجيل الخروج
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <div class="page-container">
+
+            <!-- DASHBOARD -->
+
+            <section id="dashboard">
+
+                <header class="page-header">
+
+                    <div>
+                        <h1 class="page-title">لوحة التحكم</h1>
+                        <p class="page-subtitle">
+                            إدارة وتنظيم قوالب الأكواد البرمجية
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="newTemplateButton"
+                    >
+                        ＋ قالب جديد
                     </button>
 
-                    <button class="secondary" type="button" id="exampleBtn">
-                        تحميل مثال Java SQLite
-                    </button>
+                </header>
 
-                    <button class="secondary" type="button" id="newBtn">
-                        قالب جديد
-                    </button>
 
-                    <button class="secondary" type="button" id="refreshBtn">
-                        تحديث القائمة
-                    </button>
+                <!-- STATISTICS -->
 
-                    <button class="danger" type="button" id="logoutBtn">
-                        تسجيل الخروج
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-icon blue">⌘</div>
+                        <div class="stat-value" id="totalTemplates">0</div>
+                        <div class="stat-label">إجمالي القوالب</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">✓</div>
+                        <div class="stat-value" id="totalLanguages">0</div>
+                        <div class="stat-label">لغات البرمجة</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⌕</div>
+                        <div class="stat-value" id="totalKeywords">0</div>
+                        <div class="stat-label">الكلمات المفتاحية</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">▤</div>
+                        <div class="stat-value" id="totalFields">0</div>
+                        <div class="stat-label">الحقول الافتراضية</div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TEMPLATE LIST -->
+
+            <section id="templates" class="card mb-20">
+
+                <div class="card-header">
+
+                    <div>
+                        <h2 class="card-title">مكتبة القوالب</h2>
+                        <p class="card-description">
+                            جميع القوالب المحفوظة في Cloud Firestore
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        id="refreshButton"
+                    >
+                        ↻ تحديث
                     </button>
 
                 </div>
 
-                <div id="saveMessage" class="message"></div>
+                <div class="toolbar">
 
-            </form>
+                    <div class="search-box">
+                        <span class="search-icon">⌕</span>
+                        <input
+                            type="search"
+                            id="searchTemplates"
+                            class="search-input"
+                            placeholder="ابحث عن قالب أو لغة برمجة..."
+                        >
+                    </div>
+
+                    <select id="languageFilter" class="form-control"
+                            style="width:auto;min-width:150px">
+                        <option value="">كل اللغات</option>
+                    </select>
+
+                </div>
+
+                <div id="tableMessage"></div>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>اسم القالب</th>
+                                <th>اللغة</th>
+                                <th>الحقول</th>
+                                <th>الكلمات المفتاحية</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="templatesTable">
+
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    جاري تحميل القوالب...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- TEMPLATE EDITOR -->
+
+            <section id="editor" class="card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h2 class="card-title" id="formTitle">
+                            إضافة قالب جديد
+                        </h2>
+
+                        <p class="card-description">
+                            أدخل بيانات القالب والكود البرمجي
+                        </p>
+                    </div>
+
+                    <span id="editingBadge" class="badge badge-primary">
+                        قالب جديد
+                    </span>
+
+                </div>
+
+                <div id="formMessage"></div>
+
+                <form id="templateForm">
+
+                    <input type="hidden" id="templateId">
+
+                    <div class="template-form">
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                اسم القالب *
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title"
+                                class="form-control"
+                                placeholder="مثال: Java SQLite Insert"
+                                required
+                                maxlength="150"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                لغة البرمجة *
+                            </label>
+
+                            <select
+                                id="language"
+                                class="form-control"
+                                required
+                            >
+                                <option value="">اختر اللغة</option>
+                                <option value="Java">Java</option>
+                                <option value="Kotlin">Kotlin</option>
+                                <option value="Python">Python</option>
+                                <option value="PHP">PHP</option>
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="HTML">HTML</option>
+                                <option value="CSS">CSS</option>
+                                <option value="SQL">SQL</option>
+                                <option value="Dart">Dart</option>
+                                <option value="C++">C++</option>
+                                <option value="C#">C#</option>
+                                <option value="Other">أخرى</option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label class="form-label">
+                                الكلمات المفتاحية *
+                            </label>
+
+                            <input
+                                type="text"
+                                id="keywords"
+                                class="form-control"
+                                placeholder="java, sqlite, insert, database"
+                                required
+                            >
+
+                            <div class="form-help">
+                                افصل الكلمات باستخدام الفاصلة.
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label class="form-label">
+                                الحقول الافتراضية
+                            </label>
+
+                            <input
+                                type="text"
+                                id="defaultFields"
+                                class="form-control"
+                                placeholder="name, age, email"
+                            >
+
+                            <div class="form-help">
+                                يمكن للمستخدم إضافة حقول أخرى عند توليد الكود.
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label class="form-label">
+                                وصف القالب
+                            </label>
+
+                            <textarea
+                                id="description"
+                                class="form-control"
+                                rows="3"
+                                placeholder="اشرح وظيفة هذا القالب..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label class="form-label">
+                                الكود البرمجي للقالب *
+                            </label>
+
+                            <textarea
+                                id="templateCode"
+                                class="code-editor"
+                                rows="16"
+                                required
+                                spellcheck="false"
+                                placeholder="اكتب القالب البرمجي هنا..."
+                            ></textarea>
+
+                            <div class="form-help">
+                                استخدم {{#fields}} و{{field}} و{{index}}
+                                و{{comma}} و{{/fields}} لتكرار الحقول.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            id="saveButton"
+                            class="btn btn-primary"
+                        >
+                            حفظ القالب
+                        </button>
+
+                        <button
+                            type="button"
+                            id="previewButton"
+                            class="btn btn-secondary"
+                        >
+                            معاينة القالب
+                        </button>
+
+                        <button
+                            type="button"
+                            id="resetButton"
+                            class="btn btn-outline"
+                        >
+                            مسح النموذج
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- PREVIEW -->
+
+                <div class="editor-section admin-hidden" id="previewSection">
+
+                    <h3>معاينة الكود الناتج</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            حقول تجريبية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="previewFields"
+                            class="form-control"
+                            value="name, age, email"
+                        >
+                    </div>
+
+                    <div class="flex gap-10 mb-20 flex-wrap">
+
+                        <button
+                            type="button"
+                            id="runPreviewButton"
+                            class="btn btn-primary btn-sm"
+                        >
+                            تحديث المعاينة
+                        </button>
+
+                        <button
+                            type="button"
+                            id="copyPreviewButton"
+                            class="btn btn-secondary btn-sm"
+                        >
+                            نسخ الكود
+                        </button>
+
+                    </div>
+
+                    <pre class="preview-box" id="previewOutput"></pre>
+
+                </div>
+
+            </section>
+
+            <footer class="text-center text-muted mt-20"
+                    style="font-size:12px;padding-bottom:20px">
+                AI Builder PRO · Firebase Cloud Firestore
+            </footer>
 
         </div>
 
-        <div class="card">
-
-            <h2>القوالب المحفوظة</h2>
-
-            <div id="templateList" class="template-list">
-                سجّل الدخول لتحميل القوالب.
-            </div>
-
-        </div>
-
-    </div>
+    </main>
 
 </div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
 
 <script type="module">
 
 import {
     db,
     auth,
+    onAuthStateChanged,
     signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
+    signOut
 } from "./firebase.js";
 
 import {
     collection,
-    addDoc,
     getDocs,
-    doc,
+    addDoc,
     updateDoc,
     deleteDoc,
+    doc,
+    getDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
+import TemplateEngine from "./template-engine.js";
+
+
+// =================================
+// ELEMENTS
+// =================================
 
 const $ = id => document.getElementById(id);
 
-const templatesRef = collection(db, "code_templates");
+const loginSection = $("loginSection");
+const adminApplication = $("adminApplication");
 
+const loginForm = $("loginForm");
+const loginButton = $("loginButton");
+const loginMessage = $("loginMessage");
+
+const templateForm = $("templateForm");
+const templatesTable = $("templatesTable");
+
+let templates = [];
 let currentUser = null;
-let loadingTemplates = false;
+let isAdmin = false;
 
 
-// عرض رسالة آمنة
-function showMessage(element, message, type = "success") {
+// =================================
+// MESSAGES
+// =================================
 
+function showMessage(element, message, type = "info") {
+
+    element.className = "status-message " + type;
     element.textContent = message;
-    element.className = "message " + type;
 
+    element.classList.remove("admin-hidden");
+}
+
+function hideMessage(element) {
+    element.classList.add("admin-hidden");
+    element.textContent = "";
 }
 
 
-// تحويل قائمة مفصولة بفواصل أو أسطر إلى مصفوفة
-function parseList(value) {
+// =================================
+// FIREBASE ADMIN CHECK
+// =================================
 
-    return [...new Set(
-        String(value || "")
-            .split(/[,\n،]+/)
-            .map(item => item.trim())
-            .filter(Boolean)
-    )];
+async function checkAdmin(user) {
 
-}
-
-
-// نموذج مثال Java SQLite
-const javaSQLiteExample = {
-    title: "Java SQLite Insert Students",
-    language: "Java",
-    keywords: [
-        "java",
-        "sqlite",
-        "insert",
-        "students",
-        "student",
-        "database",
-        "إضافة",
-        "طلاب"
-    ],
-    defaultFields: [
-        "name",
-        "age"
-    ],
-    description:
-        "إنشاء ContentValues لإدخال الحقول المحددة في جدول students باستخدام SQLite في Java.",
-    template:
-`ContentValues values = new ContentValues();
-
-{{#fields}}
-values.put("{{field}}", {{field}});
-{{/fields}}
-
-long result = db.insert("students", null, values);
-
-if (result == -1) {
-    // فشل الإدخال
-} else {
-    // تم الإدخال بنجاح
-}`
-};
-
-
-// تحميل المثال في النموذج فقط
-$("exampleBtn").addEventListener("click", () => {
-
-    $("docId").value = "";
-    $("title").value = javaSQLiteExample.title;
-    $("language").value = javaSQLiteExample.language;
-    $("keywords").value = javaSQLiteExample.keywords.join(", ");
-    $("defaultFields").value =
-        javaSQLiteExample.defaultFields.join(", ");
-    $("description").value = javaSQLiteExample.description;
-    $("template").value = javaSQLiteExample.template;
-
-    $("formTitle").textContent = "إضافة مثال Java SQLite";
-
-    showMessage(
-        $("saveMessage"),
-        "تم تحميل المثال في النموذج. اضغط حفظ القالب لإضافته إلى Firebase.",
-        "success"
-    );
-
-});
-
-
-// تسجيل الدخول
-$("loginForm").addEventListener("submit", async event => {
-
-    event.preventDefault();
-
-    const email = $("email").value.trim();
-    const password = $("password").value;
-
-    if (!email || !password) {
-        showMessage(
-            $("loginMessage"),
-            "أدخل البريد الإلكتروني وكلمة المرور.",
-            "danger"
-        );
-        return;
-    }
-
-    $("loginBtn").disabled = true;
+    if (!user) return false;
 
     try {
 
-        await signInWithEmailAndPassword(auth, email, password);
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
 
-        showMessage(
-            $("loginMessage"),
-            "تم تسجيل الدخول بنجاح.",
-            "success"
+        if (!userSnapshot.exists()) {
+            return false;
+        }
+
+        const userData = userSnapshot.data();
+
+        return (
+            userData.role === "admin" &&
+            userData.active === true
         );
 
     } catch (error) {
 
-        console.error("Login error:", error);
+        console.error("Admin check error:", error);
 
-        showMessage(
-            $("loginMessage"),
-            "فشل تسجيل الدخول: " +
-            (error.code || "") + " — " +
-            (error.message || "خطأ غير معروف"),
-            "danger"
-        );
-
-    } finally {
-
-        $("loginBtn").disabled = false;
-
+        return false;
     }
+}
 
-});
 
+// =================================
+// AUTH STATE
+// =================================
 
-// مراقبة حالة تسجيل الدخول
 onAuthStateChanged(auth, async user => {
 
     currentUser = user;
 
-    $("loginCard").hidden = !!user;
-    $("adminArea").hidden = !user;
+    if (!user) {
 
-    if (user) {
+        isAdmin = false;
 
-        await loadTemplates();
+        loginSection.classList.remove("admin-hidden");
+        adminApplication.classList.add("admin-hidden");
 
-    } else {
+        return;
+    }
 
-        $("templateList").textContent = "سجّل الدخول لتحميل القوالب.";
+    loginSection.classList.add("admin-hidden");
 
+    const allowed = await checkAdmin(user);
+
+    if (!allowed) {
+
+        await signOut(auth);
+
+        loginSection.classList.remove("admin-hidden");
+        adminApplication.classList.add("admin-hidden");
+
+        showMessage(
+            loginMessage,
+            "هذا الحساب غير مخول بالدخول إلى لوحة الإدارة.",
+            "error"
+        );
+
+        return;
+    }
+
+    isAdmin = true;
+
+    adminApplication.classList.remove("admin-hidden");
+
+    $("adminEmail").textContent = user.email || user.uid;
+
+    await loadTemplates();
+
+});
+
+
+// =================================
+// LOGIN
+// =================================
+
+loginForm.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    hideMessage(loginMessage);
+
+    loginButton.disabled = true;
+    loginButton.textContent = "جارٍ تسجيل الدخول...";
+
+    try {
+
+        await signInWithEmailAndPassword(
+            auth,
+            $("email").value.trim(),
+            $("password").value
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        const messages = {
+            "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+            "auth/user-not-found": "الحساب غير موجود.",
+            "auth/wrong-password": "كلمة المرور غير صحيحة.",
+            "auth/too-many-requests": "محاولات كثيرة. حاول لاحقاً.",
+            "auth/network-request-failed": "تحقق من اتصال الإنترنت."
+        };
+
+        showMessage(
+            loginMessage,
+            messages[error.code] || "تعذر تسجيل الدخول: " + error.message,
+            "error"
+        );
+
+    } finally {
+
+        loginButton.disabled = false;
+        loginButton.textContent = "تسجيل الدخول";
     }
 
 });
 
 
-// حفظ قالب أو تعديله
-$("templateForm").addEventListener("submit", async event => {
+// =================================
+// LOGOUT
+// =================================
+
+$("logoutButton").addEventListener("click", async () => {
+
+    try {
+        await signOut(auth);
+    } catch (error) {
+        alert("تعذر تسجيل الخروج.");
+    }
+
+});
+
+
+// =================================
+// LOAD TEMPLATES
+// =================================
+
+async function loadTemplates() {
+
+    if (!isAdmin) return;
+
+    templatesTable.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center">
+                جاري تحميل القوالب...
+            </td>
+        </tr>
+    `;
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "code_templates")
+        );
+
+        templates = snapshot.docs.map(item => ({
+            id: item.id,
+            ...item.data()
+        }));
+
+        renderTemplates();
+        updateStatistics();
+        updateLanguageFilter();
+
+    } catch (error) {
+
+        console.error(error);
+
+        templatesTable.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center">
+                    تعذر تحميل القوالب. تحقق من قواعد Firestore.
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+// =================================
+// RENDER TEMPLATES
+// =================================
+
+function renderTemplates() {
+
+    const search = $("searchTemplates").value
+        .trim()
+        .toLowerCase();
+
+    const language = $("languageFilter").value;
+
+    const filtered = templates.filter(item => {
+
+        const searchable = [
+            item.title,
+            item.language,
+            item.description,
+            ...(item.keywords || [])
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchable.includes(search);
+
+        const matchesLanguage =
+            !language || item.language === language;
+
+        return matchesSearch && matchesLanguage;
+
+    });
+
+    templatesTable.replaceChildren();
+
+    if (!filtered.length) {
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 6;
+        cell.className = "text-center text-muted";
+        cell.textContent = "لا توجد قوالب مطابقة.";
+
+        row.appendChild(cell);
+        templatesTable.appendChild(row);
+
+        return;
+    }
+
+    filtered.forEach((item, index) => {
+
+        const row = document.createElement("tr");
+
+        const number = document.createElement("td");
+        number.textContent = String(index + 1);
+
+        const titleCell = document.createElement("td");
+
+        const title = document.createElement("div");
+        title.className = "template-title";
+        title.textContent = item.title || "بدون عنوان";
+
+        const description = document.createElement("div");
+        description.className = "template-description";
+        description.textContent = item.description || "";
+
+        titleCell.append(title, description);
+
+        const languageCell = document.createElement("td");
+
+        const languageBadge = document.createElement("span");
+        languageBadge.className = "badge badge-primary";
+        languageBadge.textContent = item.language || "Other";
+
+        languageCell.appendChild(languageBadge);
+
+        const fieldsCell = document.createElement("td");
+        fieldsCell.textContent = Array.isArray(item.defaultFields)
+            ? String(item.defaultFields.length)
+            : "0";
+
+        const keywordsCell = document.createElement("td");
+        keywordsCell.textContent = Array.isArray(item.keywords)
+            ? item.keywords.join("، ")
+            : "";
+
+        const actionsCell = document.createElement("td");
+        const actions = document.createElement("div");
+
+        actions.className = "table-actions";
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "btn btn-secondary btn-sm";
+        editButton.textContent = "تعديل";
+
+        editButton.addEventListener("click", () => {
+            editTemplate(item.id);
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "btn btn-danger btn-sm";
+        deleteButton.textContent = "حذف";
+
+        deleteButton.addEventListener("click", () => {
+            removeTemplate(item.id);
+        });
+
+        actions.append(editButton, deleteButton);
+        actionsCell.appendChild(actions);
+
+        row.append(
+            number,
+            titleCell,
+            languageCell,
+            fieldsCell,
+            keywordsCell,
+            actionsCell
+        );
+
+        templatesTable.appendChild(row);
+
+    });
+
+}
+
+
+// =================================
+// STATISTICS
+// =================================
+
+function updateStatistics() {
+
+    $("totalTemplates").textContent = templates.length;
+
+    const languages = new Set(
+        templates.map(item => item.language).filter(Boolean)
+    );
+
+    $("totalLanguages").textContent = languages.size;
+
+    const keywords = new Set();
+
+    let fieldsCount = 0;
+
+    templates.forEach(item => {
+
+        (item.keywords || []).forEach(word => {
+            keywords.add(String(word).toLowerCase());
+        });
+
+        fieldsCount += Array.isArray(item.defaultFields)
+            ? item.defaultFields.length
+            : 0;
+
+    });
+
+    $("totalKeywords").textContent = keywords.size;
+    $("totalFields").textContent = fieldsCount;
+
+}
+
+
+// =================================
+// LANGUAGE FILTER
+// =================================
+
+function updateLanguageFilter() {
+
+    const select = $("languageFilter");
+    const currentValue = select.value;
+
+    const languages = [
+        ...new Set(
+            templates.map(item => item.language).filter(Boolean)
+        )
+    ].sort();
+
+    select.replaceChildren();
+
+    const allOption = document.createElement("option");
+    allOption.value = "";
+    allOption.textContent = "كل اللغات";
+
+    select.appendChild(allOption);
+
+    languages.forEach(language => {
+
+        const option = document.createElement("option");
+
+        option.value = language;
+        option.textContent = language;
+
+        select.appendChild(option);
+
+    });
+
+    select.value = languages.includes(currentValue)
+        ? currentValue
+        : "";
+
+}
+
+
+// =================================
+// SEARCH
+// =================================
+
+$("searchTemplates").addEventListener("input", renderTemplates);
+
+$("languageFilter").addEventListener("change", renderTemplates);
+
+$("refreshButton").addEventListener("click", loadTemplates);
+
+
+// =================================
+// FORM HELPERS
+// =================================
+
+function splitValues(value) {
+
+    return value
+        .split(/[,،;|\n]+/)
+        .map(item => item.trim())
+        .filter(Boolean);
+
+}
+
+
+function resetForm() {
+
+    templateForm.reset();
+
+    $("templateId").value = "";
+
+    $("formTitle").textContent = "إضافة قالب جديد";
+
+    $("editingBadge").textContent = "قالب جديد";
+
+    $("saveButton").textContent = "حفظ القالب";
+
+    $("previewSection").classList.add("admin-hidden");
+
+    hideMessage($("formMessage"));
+
+}
+
+
+// =================================
+// NEW TEMPLATE
+// =================================
+
+$("newTemplateButton").addEventListener("click", () => {
+
+    resetForm();
+
+    $("editor").scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+$("resetButton").addEventListener("click", resetForm);
+
+
+// =================================
+// EDIT TEMPLATE
+// =================================
+
+function editTemplate(id) {
+
+    const item = templates.find(template => template.id === id);
+
+    if (!item) return;
+
+    $("templateId").value = item.id;
+
+    $("title").value = item.title || "";
+
+    $("language").value = item.language || "";
+
+    $("keywords").value = Array.isArray(item.keywords)
+        ? item.keywords.join(", ")
+        : "";
+
+    $("defaultFields").value = Array.isArray(item.defaultFields)
+        ? item.defaultFields.join(", ")
+        : "";
+
+    $("description").value = item.description || "";
+
+    $("templateCode").value = item.template || "";
+
+    $("formTitle").textContent = "تعديل القالب";
+
+    $("editingBadge").textContent = "وضع التعديل";
+
+    $("saveButton").textContent = "حفظ التعديلات";
+
+    $("previewSection").classList.add("admin-hidden");
+
+    hideMessage($("formMessage"));
+
+    $("editor").scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+// =================================
+// SAVE TEMPLATE
+// =================================
+
+templateForm.addEventListener("submit", async event => {
 
     event.preventDefault();
 
-    if (!currentUser) {
-
-        showMessage(
-            $("saveMessage"),
-            "يجب تسجيل الدخول أولًا.",
-            "danger"
-        );
-
+    if (!isAdmin || !currentUser) {
+        alert("غير مصرح لك بتنفيذ هذه العملية.");
         return;
-
     }
 
     const title = $("title").value.trim();
     const language = $("language").value.trim();
-    const keywords = parseList($("keywords").value);
-    const defaultFields = parseList($("defaultFields").value);
+    const keywords = splitValues($("keywords").value);
+    const defaultFields = splitValues($("defaultFields").value);
     const description = $("description").value.trim();
-    const template = $("template").value;
-    const docId = $("docId").value.trim();
+    const code = $("templateCode").value;
 
-    if (!title || !language || keywords.length === 0 || !template.trim()) {
+    if (!title || !language || !keywords.length || !code.trim()) {
 
         showMessage(
-            $("saveMessage"),
-            "أكمل اسم القالب واللغة وكلمات البحث والكود.",
-            "danger"
+            $("formMessage"),
+            "يرجى تعبئة اسم القالب واللغة والكلمات المفتاحية والكود.",
+            "error"
         );
 
         return;
-
     }
 
-    const data = {
+    const templateData = {
         title,
         language,
         keywords,
         defaultFields,
         description,
-        template,
+        template: code,
         updatedAt: serverTimestamp()
     };
 
-    $("saveBtn").disabled = true;
+    const id = $("templateId").value;
+
+    const saveButton = $("saveButton");
+
+    saveButton.disabled = true;
+    saveButton.textContent = "جارٍ الحفظ...";
 
     try {
 
-        if (docId) {
+        if (id) {
 
             await updateDoc(
-                doc(db, "code_templates", docId),
-                data
+                doc(db, "code_templates", id),
+                templateData
             );
 
             showMessage(
-                $("saveMessage"),
-                "تم تعديل القالب بنجاح.",
+                $("formMessage"),
+                "تم تحديث القالب بنجاح.",
                 "success"
             );
 
         } else {
 
-            data.createdAt = serverTimestamp();
+            templateData.createdAt = serverTimestamp();
 
-            const created = await addDoc(templatesRef, data);
+            await addDoc(
+                collection(db, "code_templates"),
+                templateData
+            );
 
             showMessage(
-                $("saveMessage"),
-                "تم حفظ القالب بنجاح. رقم المستند: " + created.id,
+                $("formMessage"),
+                "تمت إضافة القالب بنجاح.",
                 "success"
             );
 
         }
 
-        resetForm();
         await loadTemplates();
 
-    } catch (error) {
+        resetForm();
 
-        console.error("Firebase Save Error:", error);
-
-        showMessage(
-            $("saveMessage"),
-            "فشل الحفظ.\n" +
-            "رمز الخطأ: " + (error.code || "غير متوفر") +
-            "\nالتفاصيل: " + (error.message || "خطأ غير معروف"),
-            "danger"
-        );
-
-    } finally {
-
-        $("saveBtn").disabled = false;
-
-    }
-
-});
-
-
-// تفريغ النموذج
-function resetForm() {
-
-    $("templateForm").reset();
-    $("docId").value = "";
-    $("formTitle").textContent = "إضافة قالب جديد";
-
-}
-
-
-// زر قالب جديد
-$("newBtn").addEventListener("click", () => {
-
-    resetForm();
-
-    $("saveMessage").style.display = "none";
-
-});
-
-
-// تحميل القوالب
-async function loadTemplates() {
-
-    if (!currentUser || loadingTemplates) {
-        return;
-    }
-
-    loadingTemplates = true;
-
-    $("refreshBtn").disabled = true;
-    $("templateList").textContent = "جارٍ تحميل القوالب...";
-
-    try {
-
-        const snapshot = await getDocs(templatesRef);
-
-        $("templateList").replaceChildren();
-
-        if (snapshot.empty) {
-
-            $("templateList").textContent =
-                "لا توجد قوالب محفوظة حتى الآن.";
-
-            return;
-
-        }
-
-        snapshot.forEach(documentSnapshot => {
-
-            const item = documentSnapshot.data();
-
-            const box = document.createElement("div");
-            box.className = "template-item";
-
-            const heading = document.createElement("h3");
-            heading.textContent = item.title || "بدون عنوان";
-
-            const badge = document.createElement("span");
-            badge.className = "badge";
-            badge.textContent = item.language || "غير محددة";
-
-            const description = document.createElement("p");
-            description.className = "small";
-            description.textContent = item.description || "لا يوجد وصف.";
-
-            const keywords = document.createElement("p");
-            keywords.className = "small";
-            keywords.textContent =
-                "كلمات البحث: " +
-                (Array.isArray(item.keywords)
-                    ? item.keywords.join(", ")
-                    : "");
-
-            const fields = document.createElement("p");
-            fields.className = "small";
-            fields.textContent =
-                "الحقول الافتراضية: " +
-                (Array.isArray(item.defaultFields)
-                    ? item.defaultFields.join(", ")
-                    : "");
-
-            const editButton = document.createElement("button");
-            editButton.className = "secondary";
-            editButton.textContent = "تعديل";
-
-            editButton.addEventListener("click", () => {
-
-                $("docId").value = documentSnapshot.id;
-                $("title").value = item.title || "";
-                $("language").value = item.language || "";
-
-                $("keywords").value =
-                    Array.isArray(item.keywords)
-                        ? item.keywords.join(", ")
-                        : "";
-
-                $("defaultFields").value =
-                    Array.isArray(item.defaultFields)
-                        ? item.defaultFields.join(", ")
-                        : "";
-
-                $("description").value = item.description || "";
-                $("template").value = item.template || "";
-
-                $("formTitle").textContent = "تعديل القالب";
-
-                $("saveMessage").style.display = "none";
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-
-            });
-
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "danger";
-            deleteButton.textContent = "حذف";
-
-            deleteButton.addEventListener("click", async () => {
-
-                if (!currentUser) {
-
-                    alert("يجب تسجيل الدخول أولًا.");
-                    return;
-
-                }
-
-                if (!confirm("هل تريد حذف القالب: " + (item.title || "") + "؟")) {
-                    return;
-                }
-
-                deleteButton.disabled = true;
-
-                try {
-
-                    await deleteDoc(
-                        doc(db, "code_templates", documentSnapshot.id)
-                    );
-
-                    await loadTemplates();
-
-                } catch (error) {
-
-                    console.error("Firebase Delete Error:", error);
-
-                    alert(
-                        "فشل الحذف.\n" +
-                        "رمز الخطأ: " + (error.code || "") +
-                        "\nالتفاصيل: " + (error.message || "")
-                    );
-
-                    deleteButton.disabled = false;
-
-                }
-
-            });
-
-            const actions = document.createElement("div");
-            actions.className = "actions";
-            actions.append(editButton, deleteButton);
-
-            box.append(
-                heading,
-                badge,
-                description,
-                keywords,
-                fields,
-                actions
-            );
-
-            $("templateList").appendChild(box);
-
+        $("templates").scrollIntoView({
+            behavior: "smooth"
         });
 
     } catch (error) {
 
-        console.error("Firebase Load Error:", error);
+        console.error(error);
 
-        $("templateList").textContent =
-            "فشل تحميل القوالب. رمز الخطأ: " +
-            (error.code || "غير متوفر") +
-            " — " +
-            (error.message || "خطأ غير معروف");
+        showMessage(
+            $("formMessage"),
+            "تعذر حفظ القالب. تحقق من صلاحيات Firestore.",
+            "error"
+        );
 
     } finally {
 
-        loadingTemplates = false;
-        $("refreshBtn").disabled = false;
+        saveButton.disabled = false;
+        saveButton.textContent = id
+            ? "حفظ التعديلات"
+            : "حفظ القالب";
+
+    }
+
+});
+
+
+// =================================
+// DELETE TEMPLATE
+// =================================
+
+async function removeTemplate(id) {
+
+    if (!isAdmin) return;
+
+    const item = templates.find(template => template.id === id);
+
+    if (!item) return;
+
+    const confirmed = confirm(
+        `هل تريد حذف القالب "${item.title}"؟`
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+        await deleteDoc(
+            doc(db, "code_templates", id)
+        );
+
+        await loadTemplates();
+
+        showMessage(
+            $("tableMessage"),
+            "تم حذف القالب بنجاح.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            $("tableMessage"),
+            "تعذر حذف القالب. تحقق من صلاحيات المسؤول.",
+            "error"
+        );
 
     }
 
 }
 
 
-// تحديث القائمة
-$("refreshBtn").addEventListener("click", loadTemplates);
+// =================================
+// PREVIEW TEMPLATE
+// =================================
+
+$("previewButton").addEventListener("click", () => {
+
+    $("previewSection").classList.remove("admin-hidden");
+
+    renderPreview();
+
+    $("previewSection").scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
 
 
-// تسجيل الخروج
-$("logoutBtn").addEventListener("click", async () => {
+$("runPreviewButton").addEventListener("click", renderPreview);
+
+
+function renderPreview() {
+
+    const code = $("templateCode").value;
+
+    if (!code.trim()) {
+
+        $("previewOutput").textContent =
+            "يرجى إدخال كود القالب أولاً.";
+
+        return;
+    }
 
     try {
 
-        await signOut(auth);
-        resetForm();
+        const fields = splitValues($("previewFields").value);
+
+        const result = TemplateEngine.renderTemplate(
+            code,
+            fields
+        );
+
+        $("previewOutput").textContent = result;
 
     } catch (error) {
 
-        console.error("Logout error:", error);
-
-        alert("تعذر تسجيل الخروج: " + (error.message || ""));
+        $("previewOutput").textContent =
+            "حدث خطأ أثناء المعاينة: " + error.message;
 
     }
+
+}
+
+
+// =================================
+// COPY PREVIEW
+// =================================
+
+$("copyPreviewButton").addEventListener("click", async () => {
+
+    const code = $("previewOutput").textContent;
+
+    try {
+
+        await navigator.clipboard.writeText(code);
+
+        $("copyPreviewButton").textContent = "تم النسخ ✓";
+
+        setTimeout(() => {
+            $("copyPreviewButton").textContent = "نسخ الكود";
+        }, 1500);
+
+    } catch (error) {
+
+        alert("تعذر النسخ. تحقق من صلاحيات المتصفح.");
+
+    }
+
+});
+
+
+// =================================
+// NAVIGATION ACTIVE STATE
+// =================================
+
+document.querySelectorAll(".nav-item").forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        link.classList.add("active");
+
+    });
 
 });
 
